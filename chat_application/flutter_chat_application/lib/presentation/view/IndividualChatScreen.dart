@@ -4,9 +4,10 @@ import 'dart:io';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_application/presentation/controller/chatNotifier.dart';
-import 'package:flutter_chat_application/utils/socket/socket_client.dart';
+
 
 import '../../main.dart';
+import '../../utils/socket/socket_client.dart';
 import '../widgets/custom_textfield.dart';
 
 class IndividualChatScreen extends StatefulWidget {
@@ -22,13 +23,14 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
   TextEditingController messageEditingController = TextEditingController();
   final _textFieldKey = UniqueKey();
 
+
   @override
   void initState() {
-    SocketClientSingleton.instance?.initSocket();
+    SocketClientSingleton.getInstance.initSocket();
     super.initState();
     chatNotifier.addListenerNode();
-
   }
+
 
   @override
   Widget build(BuildContext context) {
