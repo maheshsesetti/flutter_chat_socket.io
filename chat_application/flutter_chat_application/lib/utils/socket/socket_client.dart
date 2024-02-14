@@ -1,19 +1,50 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketClientSingleton {
-  static final SocketClientSingleton instance = SocketClientSingleton._internal();
-  SocketClientSingleton._internal();
-  IO.Socket? socket;
-  static SocketClientSingleton get getInstance => instance;
+  static final SocketClientSingleton instance =
+      SocketClientSingleton._internal();
 
-  void initSocket() {
-    socket = IO.io('http://192.168.0.100:3000', <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': false,
+  factory SocketClientSingleton() {
+    return instance;
+  }
+
+  SocketClientSingleton._internal();
+
+  ValueNotifier<List<String>> messages = ValueNotifier<List<String>>([]);
+  // static SocketClientSingleton get getInstance => instance;
+
+  Socket? socket;
+
+  Future<void> initSocket() async {
+    // connect to server
+    socket = await Socket.connect("0.0.0.0", 3000);
+
+    debugPrint(
+        "Client is Connected to Server ${socket?.remoteAddress.address} : ${socket?.remotePort}");
+
+    socket?.listen((data) {
+      final serverResponse = String.fromCharCodes(data);
+      debugPrint("Client Response is : $serverResponse");
+    }, onError: (err) {
+      debugPrint("Client error is : $err");
+      socket?.destroy();
+    }, onDone: () {
+      socket?.destroy();
     });
-    socket!.connect();
-    socket!.onError((data) => debugPrint(data.toString()));
-    socket!.onConnectError((data) => debugPrint(data.toString()));
+    socket?.write("mahesh");
+  }
+
+  void sendMessage(TextEditingController message) {
+    messages.value.add(message.text.trim());
+    socket?.write(messages);
+    message.clear();
+  }
+
+  ValueNotifier<List<String>> get getMessages => messages;
+
+  static SocketClientSingleton getInstance() {
+    return instance;
   }
 }

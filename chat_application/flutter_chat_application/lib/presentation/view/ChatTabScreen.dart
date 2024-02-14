@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../main.dart';
+import '../../client/main.dart';
 
 class ChatTabScreen extends StatelessWidget {
   const ChatTabScreen({super.key});

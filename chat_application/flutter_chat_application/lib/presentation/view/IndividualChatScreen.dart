@@ -1,12 +1,10 @@
-// ignore: file_names
 import 'dart:io';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_application/presentation/controller/chatNotifier.dart';
+import 'package:flutter_chat_application/presentation/controller/chat_Notifier.dart';
 
-
-import '../../main.dart';
+import '../../client/main.dart';
 import '../../utils/socket/socket_client.dart';
 import '../widgets/custom_textfield.dart';
 
@@ -22,20 +20,20 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
   ChatNotifier chatNotifier = ChatNotifier();
   TextEditingController messageEditingController = TextEditingController();
   final _textFieldKey = UniqueKey();
-
+  final SocketClientSingleton _singleton = SocketClientSingleton.getInstance();
 
   @override
   void initState() {
-    SocketClientSingleton.getInstance.initSocket();
+    _singleton.initSocket();
     super.initState();
     chatNotifier.addListenerNode();
   }
-
 
   @override
   Widget build(BuildContext context) {
     // final selectedIndex = ModalRoute.of(context)!.settings.arguments;
     final theme = themeManager.theme;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: theme.primaryColor,
@@ -80,13 +78,16 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: 100,
-                    itemBuilder: (context, index) {
-                      return Text("$index");
-                    }),
-              ),
+                  child: ValueListenableBuilder(
+                      valueListenable: _singleton.getMessages,
+                      builder: (context, value, _) {
+                        return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: value.length,
+                            itemBuilder: (context, index) {
+                              return Text(value[index]);
+                            });
+                      })),
               Column(
                 children: [
                   SizedBox(
@@ -142,7 +143,14 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                   valueListenable: chatNotifier.isChange,
                                   builder: (context, value, child) {
                                     return IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        chatNotifier.isChange.value
+                                            ? _singleton.sendMessage(
+                                                messageEditingController)
+                                            : "";
+
+                                        setState(() {});
+                                      },
                                       icon: Icon(
                                         chatNotifier.isChange.value
                                             ? Icons.send_rounded
