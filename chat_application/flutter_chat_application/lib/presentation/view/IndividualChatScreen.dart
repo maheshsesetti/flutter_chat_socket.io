@@ -79,13 +79,13 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
             children: [
               Expanded(
                   child: ValueListenableBuilder(
-                      valueListenable: _singleton.getMessages,
+                      valueListenable: _singleton.getMessages!,
                       builder: (context, value, _) {
                         return ListView.builder(
                             shrinkWrap: true,
-                            itemCount: value.length,
+                            itemCount: value?.length,
                             itemBuilder: (context, index) {
-                              return Text(value[index]);
+                              return Text(value![index]);
                             });
                       })),
               Column(

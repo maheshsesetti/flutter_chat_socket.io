@@ -7,11 +7,15 @@ environment:
   sdk: '>=3.2.6 <4.0.0'
 
 dependencies:
+  appwrite: ^11.0.1
+  intl_phone_number_input: ^0.7.4
+  country_picker: ^2.0.24
+  emoji_picker_flutter: ^2.0.0
+  firebase_auth: ^4.17.4
+  firebase_core: ^2.25.4
   flutter:
     sdk: flutter
-  #chat using socket
-  socket_io_client: ^2.0.0
-  emoji_picker_flutter: ^2.0.0
+  lottie: ^3.0.0
   shared_preferences: ^2.2.2
 
 dev_dependencies:
@@ -21,6 +25,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
 
 fonts:
   - family: OpenSans

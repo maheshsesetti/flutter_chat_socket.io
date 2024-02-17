@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_application/utils/share_preference.dart';
 
 class SocketClientSingleton {
   static final SocketClientSingleton instance =
@@ -36,13 +37,14 @@ class SocketClientSingleton {
     socket?.write("mahesh");
   }
 
-  void sendMessage(TextEditingController message) {
+  void sendMessage(TextEditingController message) async {
     messages.value.add(message.text.trim());
+    await Prefs.setStringList("messageList", messages.value);
     socket?.write(messages);
     message.clear();
   }
 
-  ValueNotifier<List<String>> get getMessages => messages;
+  ValueNotifier<List<String>?>? get getMessages => ValueNotifier( Prefs.getStringList("messageList")?? []);
 
   static SocketClientSingleton getInstance() {
     return instance;
