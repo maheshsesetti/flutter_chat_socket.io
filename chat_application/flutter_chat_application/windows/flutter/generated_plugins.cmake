@@ -6,6 +6,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   emoji_picker_flutter
   firebase_auth
   firebase_core
+  smart_auth
   url_launcher_windows
   window_to_front
 )

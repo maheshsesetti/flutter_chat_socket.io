@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_application/utils/share_preference.dart';
+import 'package:flutter_chat_application/utils/services/share_preference.dart';
 
 class SocketClientSingleton {
   static final SocketClientSingleton instance =

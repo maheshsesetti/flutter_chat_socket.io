@@ -2,15 +2,19 @@
 
 import 'package:appwrite/appwrite.dart';
 import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_application/presentation/view/ChatTabScreen.dart';
 import 'package:flutter_chat_application/presentation/view/Home_Page.dart';
 import 'package:flutter_chat_application/presentation/view/IndividualChatScreen.dart';
 import 'package:flutter_chat_application/presentation/view/register_screen.dart';
 import 'package:flutter_chat_application/utils/Theme/theme_manager.dart';
-import 'package:flutter_chat_application/utils/share_preference.dart';
+import 'package:flutter_chat_application/utils/services/firebase_service.dart';
+import 'package:flutter_chat_application/utils/services/share_preference.dart';
 
 import '../firebase_options.dart';
+
+
 
 final navigatorKey = GlobalKey<NavigatorState>();
 final themeManager = ThemeManage();
@@ -18,7 +22,6 @@ final themeManager = ThemeManage();
 Client client = Client();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Prefs.init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

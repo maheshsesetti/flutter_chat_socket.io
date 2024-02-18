@@ -1,9 +1,12 @@
+import 'package:appwrite/appwrite.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:flutter_chat_application/utils/services/firebase_service.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:lottie/lottie.dart';
 
+import '../../client/main.dart';
 import 'OTPScreen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -24,6 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController phnoController = TextEditingController();
   PhoneNumber number = PhoneNumber(isoCode: 'NG');
   FirebaseAuth auth = FirebaseAuth.instance;
+  final account = Account(client);
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +117,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       Expanded(
                           child: TextField(
-                            keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.number,
                         controller: phnoController,
                       )),
                     ],
@@ -129,6 +133,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       getPhoneNumber(
                           "+${selectCountryCodeController.text}${phnoController.text}",
                           context);
+
+                      // createAppWritePhoneNumber("+${selectCountryCodeController.text}${phnoController.text}",context);
                     },
                     child: const Text("Next"))
               ],
@@ -139,35 +145,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  void createAppWritePhoneNumber(
+      String phoneNumber, BuildContext context) async {
+    try {
+      final sessionToken = await account.createPhoneSession(
+          userId: ID.unique(), phone: phoneNumber);
+      debugPrint(sessionToken.toString());
+      final userId = sessionToken.userId;
+      if (!mounted) return;
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return OTPScreen(
+          userId: userId, verificationId: '',phoneNo: "",
+          // verificationId: verificationId,
+        );
+      }));
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
   void getPhoneNumber(String phoneNumber, BuildContext context) async {
     try {
       PhoneNumber number =
           await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber, 'US');
-        _showLoadingImage();
+      _showLoadingImage();
       setState(() {
         this.number = number;
       });
-      await auth.verifyPhoneNumber(
-          phoneNumber: phoneNumber,
-          verificationCompleted: (PhoneAuthCredential credential) async {
-            
-            await auth.signInWithCredential(credential);
-          },
-          verificationFailed: (FirebaseAuthException e) {
-            if (e.code == 'invalid-phone-number') {
-              debugPrint('The provided phone number is not valid.');
-            }
-          },
-          codeSent: (String verificationId, int? resendToken) {
-           _showLoadingImage();
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => OTPScreen(
-                          verificationId: verificationId,
-                        )));
-          },
-          codeAutoRetrievalTimeout: (String verificationId) {});
+      if (!mounted) return;
+      FirebaseService.instance.signInWithPhoneNumber(phoneNumber, context);
+      // await auth.verifyPhoneNumber(
+      //     phoneNumber: phoneNumber,
+      //     verificationCompleted: (PhoneAuthCredential credential) async {
+      //
+      //       await auth.signInWithCredential(credential);
+      //     },
+      //     verificationFailed: (FirebaseAuthException e) {
+      //       if (e.code == 'invalid-phone-number') {
+      //         debugPrint('The provided phone number is not valid.');
+      //       }
+      //     },
+      //     codeSent: (String verificationId, int? resendToken) {
+      //      _showLoadingImage();
+      //       Navigator.push(
+      //           context,
+      //           MaterialPageRoute(
+      //               builder: (context) => OTPScreen(
+      //                     verificationId: verificationId,
+      //                      userId: "",
+      //                   )));
+      //     },
+      //     codeAutoRetrievalTimeout: (String verificationId) {});
     } catch (e) {
       debugPrint("Invalid Number");
       _showAlertDialog();
