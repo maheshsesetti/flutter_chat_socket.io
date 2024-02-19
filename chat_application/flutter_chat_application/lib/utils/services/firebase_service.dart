@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_application/presentation/view/profile_screen.dart';
+import 'package:flutter_chat_application/utils/services/share_preference.dart';
 
 import '../../presentation/view/OTPScreen.dart';
 
@@ -32,7 +33,7 @@ class FirebaseService {
             }
           },
           codeSent: (String verificationId, int? resendToken) {
-
+            Prefs.setString("phoneNumber", phoneNumber);
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -46,22 +47,22 @@ class FirebaseService {
     } on FirebaseAuthException catch (e) {
       debugPrint(e.message);
     }
+    final User? user = auth.currentUser;
+    print(user!.uid);
+    Prefs.setString("userId", user.uid);
   }
 
-  Future<void> verifyFirebasePhoneNumberOTP(String verificationId,String otp,BuildContext context) async{
-    try{
-      PhoneAuthCredential credential =
-      PhoneAuthProvider.credential(
-          verificationId: verificationId,
-          smsCode: otp);
-      auth.signInWithCredential(credential).then(
-              (value) =>
-              Navigator.pushNamed(context, ProfileScreen.route));
-
-    } on FirebaseException catch(e) {
+  Future<void> verifyFirebasePhoneNumberOTP(
+      String verificationId, String otp, BuildContext context) async {
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: verificationId, smsCode: otp);
+      auth
+          .signInWithCredential(credential)
+          .then((value) => Navigator.pushNamed(context, ProfileScreen.route));
+    } on FirebaseException catch (e) {
       debugPrint(e.message);
     }
-
   }
 
   Future<void> _showAlertDialog(BuildContext context) async {
@@ -71,7 +72,7 @@ class FirebaseService {
         builder: (context) {
           return AlertDialog.adaptive(
             content:
-            const Text("Wrong Number, Please Try Again with valid Number"),
+                const Text("Wrong Number, Please Try Again with valid Number"),
             actions: [
               TextButton(
                   onPressed: () {
@@ -82,8 +83,4 @@ class FirebaseService {
           );
         });
   }
-
-
-
 }
-

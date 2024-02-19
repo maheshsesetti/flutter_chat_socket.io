@@ -7,6 +7,7 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../client/main.dart';
+import '../../utils/services/share_preference.dart';
 import 'OTPScreen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -127,12 +128,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 40,
                 ),
                 ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       debugPrint(
                           "+${selectCountryCodeController.text}${phnoController.text}");
                       getPhoneNumber(
                           "+${selectCountryCodeController.text}${phnoController.text}",
                           context);
+
+
 
                       // createAppWritePhoneNumber("+${selectCountryCodeController.text}${phnoController.text}",context);
                     },

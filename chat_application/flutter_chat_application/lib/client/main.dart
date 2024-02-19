@@ -1,7 +1,4 @@
 
-
-
-
 import 'dart:io';
 
 import 'package:appwrite/appwrite.dart';
@@ -14,6 +11,7 @@ import 'package:flutter_chat_application/presentation/view/IndividualChatScreen.
 import 'package:flutter_chat_application/presentation/view/profile_screen.dart';
 import 'package:flutter_chat_application/presentation/view/register_screen.dart';
 import 'package:flutter_chat_application/utils/Theme/theme_manager.dart';
+import 'package:flutter_chat_application/utils/services/share_preference.dart';
 
 import '../firebase_options.dart';
 
@@ -25,21 +23,22 @@ final themeManager = ThemeManage();
 Client client = Client();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final file = File('.env');
-  final lines = await file.readAsLines();
-  final env = <String,String>{};
-  for (final line in lines) {
-    final parts = line.split('=');
-    if (parts.length == 2) {
-      env[parts[0]] = parts[1];
-    }
-  }
+  await Prefs.init();
+  // final file = File('.env');
+  // final lines = await file.readAsLines();
+  // final env = <String,String>{};
+  // for (final line in lines) {
+  //   final parts = line.split('=');
+  //   if (parts.length == 2) {
+  //     env[parts[0]] = parts[1];
+  //   }
+  // }
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   client
-    .setEndpoint("${env['APP_WRITE_API_URL']}")
-    .setProject("${env['APP_WRITE_PROJECT_TOKEN']}")
+    .setEndpoint("https://cloud.appwrite.io/v1")
+    .setProject("65d030089dc7f72656a7")
     .setSelfSigned(status: true); 
   
   runApp(MaterialApp(
