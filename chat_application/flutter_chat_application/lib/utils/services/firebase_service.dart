@@ -16,10 +16,6 @@ class FirebaseService {
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
-  // void initFirebase() async {
-  //
-  // }
-
   Future<void> signInWithPhoneNumber(
       String phoneNumber, BuildContext context) async {
     try {
