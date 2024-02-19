@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_application/presentation/view/profile_screen.dart';
 
-import '../../presentation/view/Home_Page.dart';
 import '../../presentation/view/OTPScreen.dart';
 
 class FirebaseService {
@@ -31,6 +31,8 @@ class FirebaseService {
           verificationFailed: (FirebaseAuthException e) {
             if (e.code == 'invalid-phone-number') {
               debugPrint('The provided phone number is not valid.');
+              Navigator.pop(context);
+              _showAlertDialog(context);
             }
           },
           codeSent: (String verificationId, int? resendToken) {
@@ -58,13 +60,34 @@ class FirebaseService {
           smsCode: otp);
       auth.signInWithCredential(credential).then(
               (value) =>
-              Navigator.pushNamed(context, HomePage.route));
+              Navigator.pushNamed(context, ProfileScreen.route));
 
     } on FirebaseException catch(e) {
       debugPrint(e.message);
     }
 
   }
+
+  Future<void> _showAlertDialog(BuildContext context) async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog.adaptive(
+            content:
+            const Text("Wrong Number, Please Try Again with valid Number"),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Close"))
+            ],
+          );
+        });
+  }
+
+
 
 }
 

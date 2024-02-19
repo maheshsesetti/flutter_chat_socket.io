@@ -166,36 +166,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void getPhoneNumber(String phoneNumber, BuildContext context) async {
     try {
-      PhoneNumber number =
-          await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber, 'US');
-      _showLoadingImage();
+        PhoneNumber number =
+        await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber, 'US');
+
+        _showLoadingImage();
       setState(() {
         this.number = number;
       });
+
       if (!mounted) return;
       FirebaseService.instance.signInWithPhoneNumber(phoneNumber, context);
-      // await auth.verifyPhoneNumber(
-      //     phoneNumber: phoneNumber,
-      //     verificationCompleted: (PhoneAuthCredential credential) async {
-      //
-      //       await auth.signInWithCredential(credential);
-      //     },
-      //     verificationFailed: (FirebaseAuthException e) {
-      //       if (e.code == 'invalid-phone-number') {
-      //         debugPrint('The provided phone number is not valid.');
-      //       }
-      //     },
-      //     codeSent: (String verificationId, int? resendToken) {
-      //      _showLoadingImage();
-      //       Navigator.push(
-      //           context,
-      //           MaterialPageRoute(
-      //               builder: (context) => OTPScreen(
-      //                     verificationId: verificationId,
-      //                      userId: "",
-      //                   )));
-      //     },
-      //     codeAutoRetrievalTimeout: (String verificationId) {});
     } catch (e) {
       debugPrint("Invalid Number");
       _showAlertDialog();
